@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Length Converter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="display-4 text-center mb-3 animate-charcter">Length Converter</h1>
+                <form>
+                    <div class="form-group">
+                        <input id="inchesInput" type="number" class="form-control mb-2 form-control-lg text-white bg-transparent" placeholder="Enter Inches...">
+                    </div>
+                </form>
+                <div id="output">
+                    <div class="card card-primary mb-2 text-white">
+                        <div class="card-block">
+                            <h4>Centimeters:</h4>
+                            <div id="cmOutput"></div>
+                        </div>
+                    </div>
+
+                    <div class="card card-success mb-2 text-white">
+                        <div class="card-block">
+                            <h4>Meters:</h4>
+                            <div id="mOutput"></div>
+                        </div>
+                    </div>
+
+                    <div class="card card-danger mb-2 text-white">
+                        <div class="card-block">
+                            <h4>Feet:</h4>
+                            <div id="ftOutput"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        class TypeWriter {
+            constructor(txtElement, words, wait = 3000) {
+                this.txtElement = txtElement;
+                this.words = words;
+                this.txt = '';
+                this.wordIndex = 0;
+                this.wait = parseInt(wait, 10);
+                this.type();
+                this.isDeleting = false;
+            }
+
+            type() {
+                // Current index of word
+                const current = this.wordIndex % this.words.length;
+                // Get full text of current word
+                const fullTxt = this.words[current];
+
+                // Check if deleting
+                if(this.isDeleting) {
+                    // Remove char
+                    this.txt = fullTxt.substring(0, this.txt.length - 1);
+                } else {
+                    // Add char
+                    this.txt = fullTxt.substring(0, this.txt.length + 1);
+                }
+
+                // Insert txt into element
+                this.txtElement.innerHTML = `<span class="txt">${this.txt}</span>`;
+
+                // Initial Type Speed
+                let typeSpeed = 300;
+
+                if(this.isDeleting) {
+                    typeSpeed /= 2;
+                }
+
+                // If word is complete
+                if(!this.isDeleting && this.txt === fullTxt) {
+                    // Make pause at end
+                    typeSpeed = this.wait;
+                    // Set delete to true
+                    this.isDeleting = true;
+                } else if(this.isDeleting && this.txt === '') {
+                    this.isDeleting = false;
+                    // Move to next word
+                    this.wordIndex++;
+                    // Pause before start typing
+                    typeSpeed = 500;
+                }
+
+                setTimeout(() => this.type(), typeSpeed);
+            }
+        }
+
+        // Init On DOM Load
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Init App
+        function init() {
+            const txtElement = document.querySelector('.animate-charcter');
+            const words = ['Length Converter'];
+            const wait = 3000;
+            // Init TypeWriter
+            new TypeWriter(txtElement, words, wait);
+        }
+
+        document.getElementById("output").style.visibility = "hidden";
+        document.getElementById("inchesInput").addEventListener("input", function(e) {
+            document.getElementById("output").style.visibility = "visible";
+            let inches = e.target.value;
+            document.getElementById("cmOutput").innerHTML = inches * 2.54;
+            document.getElementById("mOutput").innerHTML = inches * 0.0254;
+            document.getElementById("ftOutput").innerHTML = inches * 0.0833333;
+        });
+    </script>
+</body>
+</html>
